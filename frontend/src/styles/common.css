@@ -1,0 +1,98 @@
+/* src/styles/common.css */
+
+/* Global styles for headings and paragraphs */
+h1, h2, h3, p {
+    margin: 0;
+    padding: 10px 0;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+  }
+  
+  p {
+    font-size: 1rem;
+  }
+  
+  /* Button styles */
+  button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* HomePage-specific styles */
+  .home-page {
+    text-align: center;
+  }
+  
+  .routes-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .route-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 200px;
+    text-align: center;
+  }
+  
+  .route-card:hover {
+    background-color: #f0f0f0;
+  }
+  
+  /* BookingPage-specific styles */
+  .booking-page {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .booking-details {
+    margin-bottom: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  form div {
+    margin-bottom: 10px;
+  }
+  
+  form input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  form button {
+    margin-top: 20px;
+    width: 100%;
+  }
+  

@@ -1,0 +1,12 @@
+# Ignore all node_modules directories
+**/node_modules/
+
+# Ignore build directories
+frontend/build/
+shuttle-service-backend/build/
+
+# Ignore environment variable files
+*.env
+
+# Ignore log files
+*.log
