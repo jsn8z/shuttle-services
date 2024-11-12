@@ -74,11 +74,11 @@ app.get('/api/bookings', async (req, res) => {
 // Serve static files (production only)
 if (process.env.NODE_ENV === 'production') {
   // Set the build folder from React as static assets
-  app.use(express.static(path.join(__dirname, '../shuttle-service-frontend/build')));
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
 
   // Serve the React app's index.html for all routes, to handle client-side routing
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../shuttle-service-frontend/build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
   });
 }
 else {
