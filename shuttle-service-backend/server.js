@@ -32,8 +32,15 @@ mongoose.connect(mongoURI, {
   .then(() => console.log('Connected to MongoDB'))
   .catch((error) => console.error('MongoDB connection error:', error));
 
+
+const morgan = require('morgan');
+// Use morgan for detailed HTTP request logging
+app.use(morgan('combined'));
+
+
 // POST route to save booking details
 app.post('/api/bookings', async (req, res) => {
+  console.log("Sending request for data");
   const { name, email, route, status } = req.body;
 
   // Validate request data
@@ -64,6 +71,7 @@ app.post('/api/bookings', async (req, res) => {
 // GET route to retrieve all the bookings saved in mongoDB
 app.get('/api/bookings', async (req, res) => {
   try {
+    console.log("Received request for data");
     const bookings = await Booking.find(); // Retrieve all bookings
     res.status(200).json(bookings); // Send the bookings as JSON response
   } catch (error) {
