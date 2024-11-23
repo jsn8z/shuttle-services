@@ -144,6 +144,18 @@ app.delete('/api/bookings/:id', async (req, res) => {
   }
 });
 
+// Endpoint to delete all bookings
+app.delete('/api/bookings', async (req, res) => {
+  try {
+    // Delete all bookings
+    await Booking.deleteMany({});
+    res.status(200).json({ message: 'All bookings have been deleted successfully.' });
+  } catch (error) {
+    console.error('Error deleting all bookings:', error);
+    res.status(500).json({ message: 'Failed to delete all bookings.' });
+  }
+});
+
 // Catch-All for Undefined Routes
 app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint not found.' });
