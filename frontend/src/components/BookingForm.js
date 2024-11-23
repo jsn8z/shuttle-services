@@ -22,7 +22,7 @@ const BookingForm = ({ route }) => {
         name,
         email,
         route,
-        status: 'failed'
+        status: 'failure'
       });
 
       // Handle success
