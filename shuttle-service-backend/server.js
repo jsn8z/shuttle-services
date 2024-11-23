@@ -125,6 +125,25 @@ else {
     });
 }
 
+app.delete('/api/bookings/:id', async (req, res) => {
+  const bookingId = req.params.id;
+
+  try {
+    // Attempt to find and delete the booking by ID
+    const booking = await Booking.findByIdAndDelete(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    // Respond with a success message
+    res.status(200).json({ message: 'Booking deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting booking:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Catch-All for Undefined Routes
 app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint not found.' });
