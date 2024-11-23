@@ -15,8 +15,26 @@ debug("Connecting to database...");
 const app = express();
 const PORT = process.env.PORT || 5000; // Default to 5000, or use PORT from environment
 
-// Middlewares
-app.use(cors());
+// Middleware: Dynamic CORS Configuration
+const corsOptions = {
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      process.env.FRONTEND_URL, // Your frontend URL from environment variable
+      'http://localhost:3000', // Allow localhost for development
+    ];
+
+    // Allow requests with no origin (useful for mobile apps or Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true); // Allow the request
+    } else {
+      callback(new Error('Not allowed by CORS')); // Reject the request
+    }
+  },
+  credentials: true, // Allow credentials like cookies or tokens
+};
+app.use(cors(corsOptions));
+
+// Parse JSON bodies
 app.use(bodyParser.json());
 
 // Connect to MongoDB using environment-based URI
