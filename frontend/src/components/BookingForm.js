@@ -56,8 +56,6 @@ const BookingForm = ({ route }) => {
         />
       </div>
       <button type="submit">Proceed to Payment</button>
-       {/* Display error message if any */}
-       {errorMessage && <p className="error-message">{errorMessage}</p>}
     </form>
   );
 };
