@@ -9,11 +9,11 @@ const bookingSchema = new mongoose.Schema({
     destination: { type: String, required: true },
     fare: { type: Number, required: true },
   },
-  status: { type: String, enum: ['success', 'failure'], required: true },
+  status: { type: String, enum: ['success', 'failure'], default: 'failure', required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
 // Create the model from the schema
-const Booking = mongoose.model('Booking', bookingSchema);
+const Booking = mongoose.model('Booking', bookingSchema, 'bookings');
 
 module.exports = Booking;

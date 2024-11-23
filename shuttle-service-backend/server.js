@@ -79,6 +79,10 @@ app.post('/api/bookings', async (req, res) => {
     // Save the booking to MongoDB
     await newBooking.save();
 
+    // Update status to 'success' after ensuring booking is saved successfully
+    newBooking.status = 'success';
+    await newBooking.save();
+
     // Respond with success
     res.status(201).json({ message: 'Booking created successfully', booking: newBooking });
   } catch (error) {
