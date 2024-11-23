@@ -4,12 +4,13 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path'); // For handling static files in production
 const Booking = require('./Models/Booking'); // Import the Booking model
-
 const debug = require('debug')('app:startup');
+require('dotenv').config();  // Load environment variables from .env file
+
+
 debug("Starting application...");
 debug("Connecting to database...");
 
-require('dotenv').config();  // Load environment variables from .env file
 
 const app = express();
 const PORT = process.env.PORT || 5000; // Default to 5000, or use PORT from environment
@@ -25,7 +26,7 @@ const mongoURI = process.env.NODE_ENV === 'production'
 
 console.log("MONGO_URL:", process.env.MONGO_URI); // Check if environment variable is loaded correctly
 
-mongoose.connect(mongoURI, {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -86,7 +87,11 @@ if (process.env.NODE_ENV === 'production') {
 
   // Serve the React app's index.html for all routes, to handle client-side routing
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'), (err) => {
+      if (err) {
+        res.status(500).send('Error loading the application.');
+      }
+    });
   });
 }
 else {
@@ -97,6 +102,17 @@ else {
       res.send("API is running in development mode.");
     });
 }
+
+// Catch-All for Undefined Routes
+app.use((req, res) => {
+  res.status(404).json({ message: 'Endpoint not found.' });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Internal server error' });
+});
 
 // Start the server
 app.listen(PORT, () => {
