@@ -145,7 +145,7 @@ app.delete('/api/bookings/:id', async (req, res) => {
 });
 
 // Endpoint to delete all bookings
-app.delete('/api/bookings', async (req, res) => {
+app.delete('/api/bookings/deleteAll', async (req, res) => {
   try {
     // Delete all bookings
     await Booking.deleteMany({});
