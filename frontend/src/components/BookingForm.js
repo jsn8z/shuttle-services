@@ -14,7 +14,7 @@ const BookingForm = ({ route }) => {
 
     try {
       // Send POST request to backend API to save booking
-      const response = await axios.post(`${API_URL}/bookings`, {
+      const response = await axios.post(`${API_URL}/api/bookings`, {
         name,
         email,
         route,
@@ -56,6 +56,8 @@ const BookingForm = ({ route }) => {
         />
       </div>
       <button type="submit">Proceed to Payment</button>
+       {/* Display error message if any */}
+       {errorMessage && <p className="error-message">{errorMessage}</p>}
     </form>
   );
 };
