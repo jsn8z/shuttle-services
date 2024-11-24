@@ -15,9 +15,12 @@ debug("Connecting to database...");
 const app = express();
 const PORT = process.env.PORT || 5000; // Default to 5000, or use PORT from environment
 
+console.log("FRONTEND_URL from env:", process.env.FRONTEND_URL);
+
 // Middleware: Dynamic CORS Configuration
 const corsOptions = {
   origin: (origin, callback) => {
+    console.log(`Origin: ${origin}`); // Log the origin of the request
     const allowedOrigins = [
       process.env.FRONTEND_URL, // Your frontend URL from environment variable
       'http://localhost:3000', // Allow localhost for development
@@ -27,6 +30,7 @@ const corsOptions = {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true); // Allow the request
     } else {
+      console.error(`CORS error: Origin ${origin} is not allowed.`);
       callback(new Error('Not allowed by CORS')); // Reject the request
     }
   },
