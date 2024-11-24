@@ -6,7 +6,7 @@ frontend/build/
 shuttle-service-backend/build/
 
 # Ignore environment variable files
-*.env
+# *.env
 
 # Ignore log files
 *.log
