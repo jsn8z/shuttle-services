@@ -1,5 +1,5 @@
 # Ignore all node_modules directories
-# **/node_modules/
+**/node_modules/
 
 # Ignore build directories
 frontend/build/

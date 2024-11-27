@@ -4,8 +4,11 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path'); // For handling static files in production
 const Booking = require('./Models/Booking'); // Import the Booking model
+const nodemailer = require('nodemailer');
+const paypal = require('@paypal/checkout-server-sdk'); // PayPal SDK
 const debug = require('debug')('app:startup');
 require('dotenv').config();  // Load environment variables from .env file
+
 
 
 debug("Starting application...");
@@ -16,6 +19,9 @@ const app = express();
 const PORT = process.env.PORT || 5000; // Default to 5000, or use PORT from environment
 
 console.log("FRONTEND_URL from env:", process.env.FRONTEND_URL);
+console.log('Admin Email:', process.env.ADMIN_EMAIL);
+console.log('Admin Password:', process.env.ADMIN_PASSWORD);
+console.log('Type of Password:', typeof process.env.ADMIN_PASSWORD);
 
 // Middleware: Dynamic CORS Configuration
 const corsOptions = {
@@ -60,6 +66,20 @@ const morgan = require('morgan');
 // Use morgan for detailed HTTP request logging
 app.use(morgan('combined'));
 
+// PayPal configuration
+const environment = process.env.NODE_ENV === 'production'
+  ? new paypal.core.LiveEnvironment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_SECRET)
+  : new paypal.core.SandboxEnvironment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_SECRET);
+const paypalClient = new paypal.core.PayPalHttpClient(environment);
+
+// Nodemailer setup for email notifications
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.ADMIN_EMAIL, // Your email address
+    pass: process.env.ADMIN_PASSWORD, // Your email password or app-specific password
+  },
+});
 
 // POST route to save booking details
 app.post('/api/bookings', async (req, res) => {
@@ -72,28 +92,45 @@ app.post('/api/bookings', async (req, res) => {
   }
 
   try {
-    // Create a new booking document
-    const newBooking = new Booking({
-      name,
-      email,
-      route,
-      status,
-    });
-
-    // Save the booking to MongoDB
+    const newBooking = new Booking({ name, email, route, status });
     await newBooking.save();
 
     // Update status to 'success' after ensuring booking is saved successfully
     newBooking.status = 'success';
     await newBooking.save();
 
-    // Respond with success
+    // Send email to the user
+    const userMailOptions = {
+      from: process.env.ADMIN_EMAIL,
+      to: email,
+      subject: 'Booking Confirmation',
+      text: `Hello ${name},\n\nYour booking has been confirmed.\nRoute: ${route.origin} to ${route.destination}\nFare: $${route.fare}\n\nThank you for choosing us!`,
+    };
+
+    // Send email to the admin
+    const adminMailOptions = {
+      from: process.env.ADMIN_EMAIL,
+      to: process.env.ADMIN_EMAIL,
+      subject: 'New Booking Notification',
+      text: `A new booking has been made:\n\nName: ${name}\nEmail: ${email}\nRoute: ${route.origin} to ${route.destination}\nFare: $${route.fare}\nStatus: ${status}`,
+    };
+
+    await Promise.all([
+      transporter.sendMail(userMailOptions),
+      transporter.sendMail(adminMailOptions),
+    ]);
+
     res.status(201).json({ message: 'Booking created successfully', booking: newBooking });
   } catch (error) {
-    console.error('Error saving booking:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error creating booking:', error);
+    if (error.code === 'EAUTH') {
+        res.status(401).json({ message: 'Authentication failed with email service provider' });
+    } else {
+        res.status(500).json({ message: 'Internal server error' });
+    }
   }
 });
+
 
 // GET route to retrieve all the bookings saved in mongoDB
 app.get('/api/bookings', async (req, res) => {
