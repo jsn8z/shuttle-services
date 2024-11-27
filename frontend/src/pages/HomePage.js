@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 
 const HomePage = () => {
   const routes = [
-    { id: 1, origin: 'Rolla', destination: 'STL Airport', fare: 120 },
+    { id: 1, origin: 'Rolla', destination: 'STL Airport', fare: 1 },
     { id: 2, origin: 'Rolla', destination: 'Casino', fare: 120 },
   ];
 

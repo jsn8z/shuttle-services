@@ -26,14 +26,15 @@ const BookingForm = ({ route }) => {
       });
 
       // Handle success
-      alert('Booking successful!');
+      alert('Booking successful!  A confirmation email has been sent to your email address.');
       console.log(response.data);
+
       // Clear form fields on success
       setName('');
       setEmail('');
     } catch (error) {
       // Handle error
-      alert('Booking failed.');
+      alert('Booking failed. Please try again');
       console.error('Error submitting booking:', error.response || error.message);
     } finally {
       setLoading(false); // Re-enable button
