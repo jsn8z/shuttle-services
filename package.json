@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "nodemailer": "^6.9.16",
+    "stripe": "^17.4.0"
+  }
+}
