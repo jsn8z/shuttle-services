@@ -6,6 +6,7 @@ const path = require('path'); // For handling static files in production
 const Booking = require('./Models/Booking'); // Import the Booking model
 const nodemailer = require('nodemailer');
 const paypal = require('@paypal/checkout-server-sdk'); // PayPal SDK
+const paypalRoutes = require('./routes/paypal');
 const debug = require('debug')('app:startup');
 require('dotenv').config();  // Load environment variables from .env file
 
@@ -15,8 +16,14 @@ debug("Starting application...");
 debug("Connecting to database...");
 
 
+
 const app = express();
 const PORT = process.env.PORT || 5000; // Default to 5000, or use PORT from environment
+
+// Middleware
+app.use(express.json());
+
+
 
 console.log("FRONTEND_URL from env:", process.env.FRONTEND_URL);
 console.log('Admin Email:', process.env.ADMIN_EMAIL);
@@ -25,6 +32,8 @@ console.log('Type of Password:', typeof process.env.ADMIN_PASSWORD);
 
 // Middleware: Dynamic CORS Configuration
 const corsOptions = {
+
+  
   origin: (origin, callback) => {
     console.log(`Origin: ${origin}`); // Log the origin of the request
     const allowedOrigins = [
@@ -42,7 +51,13 @@ const corsOptions = {
   },
   credentials: true, // Allow credentials like cookies or tokens
 };
+
 app.use(cors(corsOptions));
+
+// Apply CORS specifically to the PayPal route
+app.use('/paypal', cors(corsOptions), paypalRoutes);
+// app.options('*', cors(corsOptions)); // Handle OPTIONS requests globally
+
 
 // Parse JSON bodies
 app.use(bodyParser.json());
@@ -71,6 +86,10 @@ const environment = process.env.NODE_ENV === 'production'
   ? new paypal.core.LiveEnvironment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_SECRET)
   : new paypal.core.SandboxEnvironment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_SECRET);
 const paypalClient = new paypal.core.PayPalHttpClient(environment);
+console.log(process.env.PAYPAL_CLIENT_ID);
+console.log(process.env.PAYPAL_SECRET);
+console.log(typeof(process.env.PAYPAL_CLIENT_ID));
+console.log(typeof(process.env.PAYPAL_SECRET));
 
 // Nodemailer setup for email notifications
 const transporter = nodemailer.createTransport({

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import API_URL from '../config'; // Import the API_URL from the config
-
+import API_URL from '../config'; // Import the API_URL from the config file
 
 const BookingForm = ({ route }) => {
   const [name, setName] = useState('');
@@ -12,6 +11,7 @@ const BookingForm = ({ route }) => {
   // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Disable button while processing
 
     try {
       // Log the data being sent for debugging
@@ -22,19 +22,33 @@ const BookingForm = ({ route }) => {
         name,
         email,
         route,
-        status: 'failure'
+        status: 'success', // Explicitly set the booking status
       });
 
-      // Handle success
-      alert('Booking successful!  A confirmation email has been sent to your email address.');
-      console.log(response.data);
+      // Log response for debugging
+      console.log('Booking response:', response.data);
 
-      // Clear form fields on success
-      setName('');
-      setEmail('');
+      // After saving booking, proceed to PayPal checkout
+      const bookingId = response.data.booking._id; // Get the booking ID from the response
+      console.log('Booking ID:', bookingId);
+
+      // Send request to create PayPal order
+      const { data: order } = await axios.post(`${API_URL}/paypal/checkout`, {
+        totalAmount: route.fare,
+        currency: 'USD',
+      });
+
+      console.log('PayPal order created:', order);
+
+      if (order && order.orderId) {
+        // Redirect user to PayPal for payment
+        window.location.href = `https://www.sandbox.paypal.com/checkoutnow?token=${order.orderId}`;
+      } else {
+        throw new Error('PayPal order creation failed');
+      }
     } catch (error) {
       // Handle error
-      alert('Booking failed. Please try again');
+      alert('Booking failed. Please try again.');
       console.error('Error submitting booking:', error.response || error.message);
     } finally {
       setLoading(false); // Re-enable button
@@ -51,6 +65,7 @@ const BookingForm = ({ route }) => {
           name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          placeholder="Enter your name"
           required
         />
       </div>
